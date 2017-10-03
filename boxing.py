@@ -9,6 +9,8 @@ class boxing(arcade.Window):
         super().__init__(width, height)
 
         arcade.set_background_color(arcade.color.BLACK)
+        self.score = 0
+        self.score_text = None
 
         self.punch_frame_count = 0
         self.girl_frame_count = 0
@@ -34,6 +36,11 @@ class boxing(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.sprites_list.draw()
+
+        output = f"Score: {self.score}"
+        if not self.score_text or output != self.score_text.text:
+            self.score_text = arcade.create_text(output, arcade.color.WHITE, 14)
+        arcade.render_text(self.score_text, 400,660)
 
     def update(self, delta_time):
         self.punch_frame_count += 1
@@ -65,21 +72,20 @@ class boxing(arcade.Window):
                 punch.kill()
 
         self.punch_list.update()
+        self.girl_list.update()
+        self.sprites_list.update()
 
         for girl in self.girl_list:
 
             hit_list = arcade.check_for_collision_with_list(punch,
                                                             self.girl_list)
 
-            #if len(hit_list) > 0:
-            #    punch.kill()
+            if len(hit_list) > 0:
+                punch.kill()
 
             for girl in hit_list:
                 girl.kill()
-                #self.score += 1
-
-        self.girl_list.update()
-        self.sprites_list.update()
+                self.score += 1
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
