@@ -16,7 +16,8 @@ class boxing(arcade.Window):
         self.character_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
 
-        self.character = arcade.Sprite("images/head.png",0.5)
+        self.character = arcade.Sprite("images/boy.png")
+
         self.sprites_list.append(self.character)
         self.character_list.append(self.character)
 
@@ -29,10 +30,10 @@ class boxing(arcade.Window):
 
         for character in self.character_list:
             if self.frame_count % 10 == 0:
-                bullet = arcade.Sprite("images/punch.png",0.5)
+                bullet = arcade.Sprite("images/punch.png",0.7)
                 bullet.center_x = self.character.center_x
                 bullet.angle = 0
-                bullet.top = self.character.bottom
+                bullet.top = self.character.top
                 bullet.change_y = 5
                 self.bullet_list.append(bullet)
                 self.sprites_list.append(bullet)
@@ -45,7 +46,7 @@ class boxing(arcade.Window):
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
-        self.character.center_y = 20
+        self.character.center_y = 50
 
 
 window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
