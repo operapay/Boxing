@@ -1,8 +1,8 @@
 import arcade
+import random
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
-
 
 class boxing(arcade.Window):
     def __init__(self, width, height):
@@ -55,10 +55,10 @@ class boxing(arcade.Window):
                 self.punch_list.append(punch)
                 self.sprites_list.append(punch)
 
-        self.girl_frame_count += 1
+        #self.girl_frame_count += 100
 
         for self.prototype in self.prototype_list:
-            if self.girl_frame_count % 180 == 0:
+            if random.randrange(300) == 0:
                 girl = arcade.Sprite("images/girl.png",0.7)
                 girl.center_x = self.prototype.center_x
                 girl.angle = 0
@@ -90,7 +90,6 @@ class boxing(arcade.Window):
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
         self.character.center_y = 50
-
 
 window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
 
