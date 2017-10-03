@@ -1,147 +1,91 @@
-import random
 import arcade
 
-SPRITE_SCALING = 0.5
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-
-BULLET_SPEED = 5
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 700
 
 
-class Bullet(arcade.Sprite):
-    def update(self):
-        self.center_y += BULLET_SPEED
+class boxing(arcade.Window):
+    def __init__(self, width, height):
+        super().__init__(width, height)
 
+        arcade.set_background_color(arcade.color.BLACK)
 
-class MyAppWindow(arcade.Window):
-    """ Main application class. """
+        self.punch_frame_count = 0
+        self.girl_frame_count = 0
 
-    def __init__(self):
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Sprites and Bullets Demo")
+        self.sprites_list = arcade.SpriteList()
+        self.character_list = arcade.SpriteList()
+        self.punch_list = arcade.SpriteList()
+        self.girl_list = arcade.SpriteList()
+        self.prototype_list = arcade.SpriteList()
 
-        """ Set up the game and initialize the variables. """
+        self.character = arcade.Sprite("images/boy.png")
+        self.sprites_list.append(self.character)
+        self.character_list.append(self.character)
 
-        # Sprite lists
-        self.all_sprites_list = arcade.SpriteList()
-        self.coin_list = arcade.SpriteList()
-        self.bullet_list = arcade.SpriteList()
-
-        # Set up the player
-        self.score = 0
-        self.score_text = None
-        self.player_sprite = arcade.Sprite("images/head.png", SPRITE_SCALING)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 70
-        self.all_sprites_list.append(self.player_sprite)
-
-        # Load sounds
-        #self.gun_sound = arcade.sound.load_sound("sounds/laser1.ogg")
-        #self.hit_sound = arcade.sound.load_sound("sounds/phaseJump1.ogg")
-
-        for i in range(50):
-
-            # Create the coin instance
-            coin = arcade.Sprite("images/punch.png", SPRITE_SCALING / 3)
-
-            # Position the coin
-            coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(120, SCREEN_HEIGHT)
-
-            # Add the coin to the lists
-            self.all_sprites_list.append(coin)
-            self.coin_list.append(coin)
-
-        # Don't show the mouse cursor
-        self.set_mouse_visible(False)
-
-        # Set the background color
-        arcade.set_background_color(arcade.color.AMAZON)
+        for i in range(8):
+            self.prototype = arcade.Sprite("images/girl.png", 0.5)
+            self.prototype.center_x = SCREEN_WIDTH - 70*i
+            self.prototype.center_y = SCREEN_HEIGHT + 50
+            self.prototype.angle = 0
+            self.sprites_list.append(self.prototype)
+            self.prototype_list.append(self.prototype)
 
     def on_draw(self):
-        """
-        Render the screen.
-        """
-
-        # This command has to happen before we start drawing
         arcade.start_render()
-
-        # Draw all the sprites.
-        self.coin_list.draw()
-        self.bullet_list.draw()
-        self.player_sprite.draw()
-
-        # Put the text on the screen.
-        output = f"Score: {self.score}"
-
-        # Is this the same text as last frame? If not, set up a new text object
-        if not self.score_text or output != self.score_text.text:
-            self.score_text = arcade.create_text(output, arcade.color.WHITE, 14)
-        # Render the text
-        arcade.render_text(self.score_text, 10, 20)
-
-    def on_mouse_motion(self, x, y, dx, dy):
-        """
-        Called whenever the mouse moves.
-        """
-        self.player_sprite.center_x = x
-
-    def on_mouse_press(self, x, y, button, modifiers):
-        """
-        Called whenever the mouse button is clicked.
-        """
-        # Gunshot sound
-        #arcade.sound.play_sound(self.gun_sound)
-        # Create a bullet
-        bullet = Bullet("images/punch.png", SPRITE_SCALING * 1.5)
-
-        # The image points to the right, and we want it to point up. So
-        # rotate it.
-        bullet.angle = 90
-
-        # Position the bullet
-        bullet.center_x = self.player_sprite.center_x
-        bullet.bottom = self.player_sprite.top
-
-        # Add the bullet to the appropriate lists
-        self.all_sprites_list.append(bullet)
-        self.bullet_list.append(bullet)
+        self.sprites_list.draw()
 
     def update(self, delta_time):
-        """ Movement and game logic """
+        self.punch_frame_count += 1
 
-        # Call update on all sprites (The sprites don't do much in this
-        # example though.)
-        self.all_sprites_list.update()
+        for character in self.character_list:
+            if self.punch_frame_count % 10 == 0:
+                punch = arcade.Sprite("images/punch.png",0.7)
+                punch.center_x = self.character.center_x
+                punch.angle = 0
+                punch.top = self.character.top
+                punch.change_y = 5
+                self.punch_list.append(punch)
+                self.sprites_list.append(punch)
 
-        # Loop through each bullet
-        for bullet in self.bullet_list:
+        self.girl_frame_count += 1
 
-            # Check this bullet to see if it hit a coin
-            hit_list = arcade.check_for_collision_with_list(bullet,
-                                                            self.coin_list)
+        for self.prototype in self.prototype_list:
+            if self.girl_frame_count % 180 == 0:
+                girl = arcade.Sprite("images/girl.png",0.7)
+                girl.center_x = self.prototype.center_x
+                girl.angle = 0
+                girl.top = self.prototype.bottom
+                girl.change_y = -3
+                self.girl_list.append(girl)
+                self.sprites_list.append(girl)
 
-            # If it did, get rid of the bullet
-            if len(hit_list) > 0:
-                bullet.kill()
+        for punch in self.punch_list:
+            if punch.top < 0:
+                punch.kill()
 
-            # For every coin we hit, add to the score and remove the coin
-            for coin in hit_list:
-                coin.kill()
-                self.score += 1
+        self.punch_list.update()
 
-                # Hit Sound
-                #arcade.sound.play_sound(self.hit_sound)
+        for girl in self.girl_list:
 
-            # If the bullet flies off-screen, remove it.
-            if bullet.bottom > SCREEN_HEIGHT:
-                bullet.kill()
+            hit_list = arcade.check_for_collision_with_list(punch,
+                                                            self.girl_list)
+
+            #if len(hit_list) > 0:
+            #    punch.kill()
+
+            for girl in hit_list:
+                girl.kill()
+                #self.score += 1
+
+        self.girl_list.update()
+        self.sprites_list.update()
+
+    def on_mouse_motion(self, x, y, delta_x, delta_y):
+        self.character.center_x = x
+        self.character.center_y = 50
 
 
-def main():
-    MyAppWindow()
-    arcade.run()
+window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
 
-
-if __name__ == "__main__":
-    main()
+arcade.run()
