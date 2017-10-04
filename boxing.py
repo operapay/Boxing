@@ -19,7 +19,9 @@ class boxing(arcade.Window):
         self.character_list = arcade.SpriteList()
         self.punch_list = arcade.SpriteList()
         self.girl_list = arcade.SpriteList()
+        self.grade_list = arcade.SpriteList()
         self.prototype_list = arcade.SpriteList()
+        self.fire_list = arcade.SpriteList()
 
         self.character = arcade.Sprite("images/boy.png")
         self.sprites_list.append(self.character)
@@ -32,6 +34,14 @@ class boxing(arcade.Window):
             self.prototype.angle = 0
             self.sprites_list.append(self.prototype)
             self.prototype_list.append(self.prototype)
+
+        for j in range(8):
+            self.fire = arcade.Sprite("images/f.png", 0.7)
+            self.fire.center_x = SCREEN_WIDTH - 70*j
+            self.fire.center_y = SCREEN_HEIGHT + 60
+            self.fire.angle = 0
+            self.sprites_list.append(self.fire)
+            self.fire_list.append(self.fire)
 
     def on_draw(self):
         arcade.start_render()
@@ -56,7 +66,6 @@ class boxing(arcade.Window):
                 self.sprites_list.append(punch)
 
         #self.girl_frame_count += 100
-
         for self.prototype in self.prototype_list:
             if random.randrange(300) == 0:
                 girl = arcade.Sprite("images/girl.png",0.7)
@@ -66,6 +75,16 @@ class boxing(arcade.Window):
                 girl.change_y = -3
                 self.girl_list.append(girl)
                 self.sprites_list.append(girl)
+
+        for self.fire in self.fire_list:
+            if random.randrange(3000) == 0:
+                grade = arcade.Sprite("images/f.png",0.8)
+                grade.center_x = self.fire.center_x
+                grade.angle = 0
+                grade.top = self.fire.bottom
+                grade.change_y = -9
+                self.grade_list.append(grade)
+                self.sprites_list.append(grade)
 
         for punch in self.punch_list:
             if punch.top < 0:
@@ -77,8 +96,7 @@ class boxing(arcade.Window):
 
         for girl in self.girl_list:
 
-            hit_list = arcade.check_for_collision_with_list(punch,
-                                                            self.girl_list)
+            hit_list = arcade.check_for_collision_with_list(punch,self.girl_list)
 
             if len(hit_list) > 0:
                 punch.kill()
