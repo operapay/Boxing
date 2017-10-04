@@ -99,13 +99,17 @@ class boxing(arcade.Window):
             if len(hit_list) > 0:
                 punch.kill()
             for girl in hit_list:
-                girl.texture = arcade.load_texture("images/f.png")
-                #girl.kill()
-                self.score += 1
+                girl.texture = arcade.load_texture("images/coin.png")
+                for character in self.character_list:
+                    keep_list = arcade.check_for_collision_with_list(character,self.girl_list)
+                    for girl in keep_list:
+                        girl.kill()
+                        self.score += 1
+
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
-        self.character.center_y = 50
+        self.character.center_y = 70
 
 def main():
     window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
