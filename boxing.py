@@ -47,7 +47,7 @@ class boxing(arcade.Window):
         arcade.start_render()
         self.sprites_list.draw()
 
-        output = f"Score: {self.score}"
+        output = "Score: {}".format(self.score)
         if not self.score_text or output != self.score_text.text:
             self.score_text = arcade.create_text(output, arcade.color.WHITE, 14)
         arcade.render_text(self.score_text, 400,660)
@@ -65,9 +65,9 @@ class boxing(arcade.Window):
                 self.punch_list.append(punch)
                 self.sprites_list.append(punch)
 
-        #self.girl_frame_count += 100
+        self.girl_frame_count += 1
         for self.prototype in self.prototype_list:
-            if random.randrange(300) == 0:
+            if self.girl_frame_count % 180 == 0:
                 girl = arcade.Sprite("images/girl.png",0.7)
                 girl.center_x = self.prototype.center_x
                 girl.angle = 0
@@ -94,13 +94,10 @@ class boxing(arcade.Window):
         self.girl_list.update()
         self.sprites_list.update()
 
-        for girl in self.girl_list:
-
+        for punch in self.punch_list:
             hit_list = arcade.check_for_collision_with_list(punch,self.girl_list)
-
             if len(hit_list) > 0:
                 punch.kill()
-
             for girl in hit_list:
                 girl.kill()
                 self.score += 1
@@ -109,6 +106,9 @@ class boxing(arcade.Window):
         self.character.center_x = x
         self.character.center_y = 50
 
-window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
+def main():
+    window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
+    arcade.run()
 
-arcade.run()
+if __name__ == "__main__":
+    main()
