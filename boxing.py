@@ -4,6 +4,8 @@ import random
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
 
+gavity = 50
+
 class boxing(arcade.Window):
     def __init__(self, width, height):
         super().__init__(width, height)
@@ -104,6 +106,8 @@ class boxing(arcade.Window):
                 punch.kill()
             for girl in hit_list:
                 girl.texture = arcade.load_texture("images/coin.png")
+                girl.center_x -= 20
+                girl.center_y -= gavity
                 for character in self.character_list:
                     keep_list = arcade.check_for_collision_with_list(character,self.girl_list)
                     for girl in keep_list:
