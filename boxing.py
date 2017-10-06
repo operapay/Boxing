@@ -1,10 +1,9 @@
 import arcade
 import random
+import time
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
-
-gavity = 50
 
 class boxing(arcade.Window):
     def __init__(self, width, height):
@@ -13,6 +12,7 @@ class boxing(arcade.Window):
         arcade.set_background_color(arcade.color.BLACK)
         self.score = 0
         self.score_text = None
+        self.times = 0.0
 
         self.is_game_over = False
         self.punch_frame_count = 0
@@ -51,6 +51,10 @@ class boxing(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
+
+        if self.is_game_over:
+            self.draw_game_over()
+            return None
         self.sprites_list.draw()
 
         output = "{}".format(self.score)
@@ -60,11 +64,10 @@ class boxing(arcade.Window):
         self.coin.draw()
 
     def draw_game_over(self):
-        arcade.start_render()
         output1 = "Game Over"
-        arcade.draw_text(output1, 240, 400, arcade.color.WHITE, 54)
+        arcade.draw_text(output1, 150, 400, arcade.color.WHITE, 35)
         output2 = "Click Play Again"
-        arcade.draw_text(output2, 310, 300, arcade.color.WHITE, 24)
+        arcade.draw_text(output2, 150, 300, arcade.color.WHITE, 24)
 
     def update(self, delta_time):
         if self.is_game_over:
@@ -118,11 +121,14 @@ class boxing(arcade.Window):
 
         for punch in self.punch_list:
             hit_list = arcade.check_for_collision_with_list(punch,self.girl_list)
+            self.times += delta_time
             if len(hit_list) > 0:
                 punch.kill()
             for girl in hit_list:
-                girl.texture = arcade.load_texture("images/coin.png")
-                girl.change_y = -4
+                girl.texture = arcade.load_texture("images/fog.png")
+                if(self.times > 30):
+                    girl.texture = arcade.load_texture("images/coin.png")
+                    girl.change_y = -4
                 for character in self.character_list:
                     keep_list = arcade.check_for_collision_with_list(character,self.girl_list)
                     for girl in keep_list:
