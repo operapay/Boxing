@@ -15,6 +15,7 @@ class boxing(arcade.Window):
         self.score = 0
         self.score_text = None
 
+        self.is_game_over = False
         self.punch_frame_count = 0
         self.girl_frame_count = 0
 
@@ -60,12 +61,17 @@ class boxing(arcade.Window):
         self.coin.draw()
 
     def draw_game_over(self):
+        arcade.start_render()
         output1 = "Game Over"
         arcade.draw_text(output1, 240, 400, arcade.color.WHITE, 54)
         output2 = "Click Play Again"
         arcade.draw_text(output2, 310, 300, arcade.color.WHITE, 24)
 
     def update(self, delta_time):
+        if self.is_game_over:
+            self.draw_game_over()
+            return None
+
         self.punch_frame_count += 1
 
         for character in self.character_list:
@@ -124,7 +130,8 @@ class boxing(arcade.Window):
         for grade in self.grade_list:
             game_list = arcade.check_for_collision_with_list(grade,self.character_list)
             for grade in game_list:
-                time.sleep(0.5)
+                self.is_game_over = True
+                break
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
