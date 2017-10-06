@@ -1,5 +1,6 @@
 import arcade
 import random
+import time
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
@@ -55,8 +56,14 @@ class boxing(arcade.Window):
         output = "{}".format(self.score)
         if not self.score_text or output != self.score_text.text:
             self.score_text = arcade.create_text(output, arcade.color.GOLD, 16)
-        arcade.render_text(self.score_text, 450,664)
+        arcade.render_text(self.score_text, 450,662)
         self.coin.draw()
+
+    def draw_game_over(self):
+        output1 = "Game Over"
+        arcade.draw_text(output1, 240, 400, arcade.color.WHITE, 54)
+        output2 = "Click Play Again"
+        arcade.draw_text(output2, 310, 300, arcade.color.WHITE, 24)
 
     def update(self, delta_time):
         self.punch_frame_count += 1
@@ -114,6 +121,10 @@ class boxing(arcade.Window):
                         girl.kill()
                         self.score += 1
 
+        for grade in self.grade_list:
+            game_list = arcade.check_for_collision_with_list(grade,self.character_list)
+            for grade in game_list:
+                time.sleep(0.5)
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
