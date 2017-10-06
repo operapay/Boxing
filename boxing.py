@@ -1,6 +1,5 @@
 import arcade
 import random
-import time
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
@@ -99,7 +98,7 @@ class boxing(arcade.Window):
             if random.randrange(3000) == 0:
                 grade = arcade.Sprite("images/f.png",0.8)
                 grade.center_x = self.fire.center_x
-                grade.angle = 0
+                grade.angle = 180
                 grade.top = self.fire.bottom
                 grade.change_y = -9
                 self.grade_list.append(grade)
@@ -123,8 +122,7 @@ class boxing(arcade.Window):
                 punch.kill()
             for girl in hit_list:
                 girl.texture = arcade.load_texture("images/coin.png")
-                girl.center_x -= 20
-                girl.center_y -= gavity
+                girl.change_y = -4
                 for character in self.character_list:
                     keep_list = arcade.check_for_collision_with_list(character,self.girl_list)
                     for girl in keep_list:
