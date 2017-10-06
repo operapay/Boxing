@@ -109,6 +109,10 @@ class boxing(arcade.Window):
             if punch.top < 0:
                 punch.kill()
 
+        for girl in self.girl_list:
+            if girl.bottom < 0:
+                girl.kill()
+
         self.punch_list.update()
         self.girl_list.update()
         self.sprites_list.update()
