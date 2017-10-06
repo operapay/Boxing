@@ -43,14 +43,18 @@ class boxing(arcade.Window):
             self.sprites_list.append(self.fire)
             self.fire_list.append(self.fire)
 
+        self.coin = arcade.Sprite('images/score.png',0.35)
+        self.coin.set_position(430 , 670)
+
     def on_draw(self):
         arcade.start_render()
         self.sprites_list.draw()
 
-        output = "Score: {}".format(self.score)
+        output = "{}".format(self.score)
         if not self.score_text or output != self.score_text.text:
-            self.score_text = arcade.create_text(output, arcade.color.WHITE, 14)
-        arcade.render_text(self.score_text, 400,660)
+            self.score_text = arcade.create_text(output, arcade.color.GOLD, 16)
+        arcade.render_text(self.score_text, 450,664)
+        self.coin.draw()
 
     def update(self, delta_time):
         self.punch_frame_count += 1
@@ -109,7 +113,7 @@ class boxing(arcade.Window):
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
-        self.character.center_y = 70
+        self.character.center_y = 100
 
 def main():
     window = boxing(SCREEN_WIDTH, SCREEN_HEIGHT)
