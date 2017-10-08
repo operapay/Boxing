@@ -24,7 +24,6 @@ class boxing(arcade.Window):
         self.grade_list = arcade.SpriteList()
         self.prototype_list = arcade.SpriteList()
         self.fire_list = arcade.SpriteList()
-        self.coin_list = arcade.SpriteList()
 
         self.character = arcade.Sprite("images/boy.png")
         self.sprites_list.append(self.character)
@@ -90,7 +89,7 @@ class boxing(arcade.Window):
                 self.sprites_list.append(punch)
 
         self.girl_frame_count += 1
-        if self.times < 10:
+        if self.times < 20:
             for self.prototype in self.prototype_list:
                 if self.girl_frame_count % 180 == 0:
                     girl = arcade.Sprite("images/girl.png",0.7)
@@ -100,7 +99,7 @@ class boxing(arcade.Window):
                     girl.change_y = -3
                     self.girl_list.append(girl)
                     self.sprites_list.append(girl)
-        if self.times > 10 and self.times < 15:
+        if self.times > 20 and self.times < 40:
             for self.prototype in self.prototype_list:
                 if self.girl_frame_count % 100 == 0:
                     girl = arcade.Sprite("images/girl.png",0.7)
@@ -110,27 +109,47 @@ class boxing(arcade.Window):
                     girl.change_y = -3
                     self.girl_list.append(girl)
                     self.sprites_list.append(girl)
-        if self.times >15 and self.times < 20:
+        if self.times >40 and self.times < 45:
             for self.prototype in self.prototype_list:
                 if self.girl_frame_count % 20 == 0:
-                    coin = arcade.Sprite("images/coin.png")
-                    coin.center_x = self.prototype.center_x
-                    coin.angle = 0
-                    coin.top = self.prototype.bottom
-                    coin.change_y = -2
-                    self.coin_list.append(coin)
-                    self.sprites_list.append(coin)
+                    girl = arcade.Sprite("images/coin.png")
+                    girl.center_x = self.prototype.center_x
+                    girl.angle = 0
+                    girl.top = self.prototype.bottom
+                    girl.change_y = -3
+                    self.girl_list.append(girl)
+                    self.sprites_list.append(girl)
+        if self.times > 45:
+            for self.prototype in self.prototype_list:
+                if random.randrange(100) == 0:
+                    girl = arcade.Sprite("images/girl.png",0.7)
+                    girl.center_x = self.prototype.center_x
+                    girl.angle = 0
+                    girl.top = self.prototype.bottom
+                    girl.change_y = -3
+                    self.girl_list.append(girl)
+                    self.sprites_list.append(girl)
 
-        print(self.times)
-        for self.fire in self.fire_list:
-            if random.randrange(3000) == 0:
-                grade = arcade.Sprite("images/f.png",0.8)
-                grade.center_x = self.fire.center_x
-                grade.angle = 180
-                grade.top = self.fire.bottom
-                grade.change_y = -9
-                self.grade_list.append(grade)
-                self.sprites_list.append(grade)
+        if self.times < 30:
+            for self.fire in self.fire_list:
+                if random.randrange(3000) == 0:
+                    grade = arcade.Sprite("images/f.png",0.8)
+                    grade.center_x = self.fire.center_x
+                    grade.angle = 180
+                    grade.top = self.fire.bottom
+                    grade.change_y = -9
+                    self.grade_list.append(grade)
+                    self.sprites_list.append(grade)
+        if self.times > 30:
+            for self.fire in self.fire_list:
+                if random.randrange(1000) == 0:
+                    grade = arcade.Sprite("images/f.png",0.8)
+                    grade.center_x = self.fire.center_x
+                    grade.angle = 180
+                    grade.top = self.fire.bottom
+                    grade.change_y = -9
+                    self.grade_list.append(grade)
+                    self.sprites_list.append(grade)
 
         for punch in self.punch_list:
             if punch.top < 0:
