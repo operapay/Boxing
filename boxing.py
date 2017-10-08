@@ -24,6 +24,7 @@ class boxing(arcade.Window):
         self.grade_list = arcade.SpriteList()
         self.prototype_list = arcade.SpriteList()
         self.fire_list = arcade.SpriteList()
+        self.coin_list = arcade.SpriteList()
 
         self.character = arcade.Sprite("images/boy.png")
         self.sprites_list.append(self.character)
@@ -75,6 +76,7 @@ class boxing(arcade.Window):
             self.draw_game_over()
             return None
 
+        self.times += delta_time
         self.punch_frame_count += 1
 
         for character in self.character_list:
@@ -88,16 +90,38 @@ class boxing(arcade.Window):
                 self.sprites_list.append(punch)
 
         self.girl_frame_count += 1
-        for self.prototype in self.prototype_list:
-            if self.girl_frame_count % 180 == 0:
-                girl = arcade.Sprite("images/girl.png",0.7)
-                girl.center_x = self.prototype.center_x
-                girl.angle = 0
-                girl.top = self.prototype.bottom
-                girl.change_y = -3
-                self.girl_list.append(girl)
-                self.sprites_list.append(girl)
+        if self.times < 10:
+            for self.prototype in self.prototype_list:
+                if self.girl_frame_count % 180 == 0:
+                    girl = arcade.Sprite("images/girl.png",0.7)
+                    girl.center_x = self.prototype.center_x
+                    girl.angle = 0
+                    girl.top = self.prototype.bottom
+                    girl.change_y = -3
+                    self.girl_list.append(girl)
+                    self.sprites_list.append(girl)
+        if self.times > 10 and self.times < 15:
+            for self.prototype in self.prototype_list:
+                if self.girl_frame_count % 100 == 0:
+                    girl = arcade.Sprite("images/girl.png",0.7)
+                    girl.center_x = self.prototype.center_x
+                    girl.angle = 0
+                    girl.top = self.prototype.bottom
+                    girl.change_y = -3
+                    self.girl_list.append(girl)
+                    self.sprites_list.append(girl)
+        if self.times >15 and self.times < 20:
+            for self.prototype in self.prototype_list:
+                if self.girl_frame_count % 20 == 0:
+                    coin = arcade.Sprite("images/coin.png")
+                    coin.center_x = self.prototype.center_x
+                    coin.angle = 0
+                    coin.top = self.prototype.bottom
+                    coin.change_y = -2
+                    self.coin_list.append(coin)
+                    self.sprites_list.append(coin)
 
+        print(self.times)
         for self.fire in self.fire_list:
             if random.randrange(3000) == 0:
                 grade = arcade.Sprite("images/f.png",0.8)
@@ -119,7 +143,6 @@ class boxing(arcade.Window):
         self.punch_list.update()
         self.girl_list.update()
         self.sprites_list.update()
-        self.times += delta_time
 
         for punch in self.punch_list:
             hit_list = arcade.check_for_collision_with_list(punch,self.girl_list)
