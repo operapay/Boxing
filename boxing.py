@@ -1,6 +1,5 @@
 import arcade
 import random
-import time
 
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
@@ -64,10 +63,12 @@ class boxing(arcade.Window):
         self.coin.draw()
 
     def draw_game_over(self):
+        output = "Score : {}".format(self.score)
+        arcade.draw_text(output, 160, 440, arcade.color.WHITE, 40)
         output1 = "Game Over"
-        arcade.draw_text(output1, 150, 400, arcade.color.WHITE, 35)
+        arcade.draw_text(output1, 150, 370, arcade.color.WHITE, 35)
         output2 = "Click Play Again"
-        arcade.draw_text(output2, 150, 300, arcade.color.WHITE, 24)
+        arcade.draw_text(output2, 150, 290, arcade.color.WHITE, 24)
 
     def update(self, delta_time):
         if self.is_game_over:
@@ -118,17 +119,15 @@ class boxing(arcade.Window):
         self.punch_list.update()
         self.girl_list.update()
         self.sprites_list.update()
+        self.times += delta_time
 
         for punch in self.punch_list:
             hit_list = arcade.check_for_collision_with_list(punch,self.girl_list)
-            self.times += delta_time
             if len(hit_list) > 0:
                 punch.kill()
             for girl in hit_list:
-                girl.texture = arcade.load_texture("images/fog.png")
-                if(self.times > 30):
-                    girl.texture = arcade.load_texture("images/coin.png")
-                    girl.change_y = -4
+                girl.texture = arcade.load_texture("images/coin.png")
+                girl.change_y = -4
                 for character in self.character_list:
                     keep_list = arcade.check_for_collision_with_list(character,self.girl_list)
                     for girl in keep_list:
