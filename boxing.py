@@ -64,7 +64,7 @@ class boxing(arcade.Window):
 
     def draw_game_over(self):
         output = "Score : {}".format(self.score)
-        arcade.draw_text(output, 160, 440, arcade.color.WHITE, 40)
+        arcade.draw_text(output, 155, 440, arcade.color.WHITE, 40)
         output1 = "Game Over"
         arcade.draw_text(output1, 150, 370, arcade.color.WHITE, 35)
         output2 = "Click Play Again"
@@ -121,7 +121,7 @@ class boxing(arcade.Window):
                     self.sprites_list.append(girl)
         if self.times > 45:
             for self.prototype in self.prototype_list:
-                if random.randrange(100) == 0:
+                if random.randrange(200) == 0:
                     girl = arcade.Sprite("images/girl.png",0.7)
                     girl.center_x = self.prototype.center_x
                     girl.angle = 0
@@ -140,7 +140,27 @@ class boxing(arcade.Window):
                     grade.change_y = -9
                     self.grade_list.append(grade)
                     self.sprites_list.append(grade)
-        if self.times > 30:
+        if self.times > 30 and self.times < 45:
+            for self.fire in self.fire_list:
+                if random.randrange(1000) == 0:
+                    grade = arcade.Sprite("images/f.png",0.8)
+                    grade.center_x = self.fire.center_x
+                    grade.angle = 180
+                    grade.top = self.fire.bottom
+                    grade.change_y = -9
+                    self.grade_list.append(grade)
+                    self.sprites_list.append(grade)
+        if self.times > 45 and self.times < 48:
+            for self.fire in self.fire_list:
+                if random.randrange(200) == 0:
+                    grade = arcade.Sprite("images/f.png",0.8)
+                    grade.center_x = self.fire.center_x
+                    grade.angle = 180
+                    grade.top = self.fire.bottom
+                    grade.change_y = -10
+                    self.grade_list.append(grade)
+                    self.sprites_list.append(grade)
+        if self.times > 48:
             for self.fire in self.fire_list:
                 if random.randrange(1000) == 0:
                     grade = arcade.Sprite("images/f.png",0.8)

@@ -50,7 +50,7 @@ class Girl(arcade.Window):
                 self.girl_list.append(girl)
                 self.sprites_list.append(girl)
 
-girl = Girl(500,700)
+girl = Girl(SCREEN_WIDTH,SCREEN_HEIGHT)
 
 class boxing(arcade.Window):
     def __init__(self, width, height):
