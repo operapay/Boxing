@@ -8,62 +8,26 @@ class Model_S: #sprite and command
     def __init__(self, picture, size, speed):
         self.model_list = arcade.SpriteList()
         self.picture = picture
-        self.speed = speed
+        self.speed = {}
+        self.tag = {}
         self.size = size
+        self.tempSpeed = speed
     def generate(self):
         for i in range(8):
             girl = arcade.Sprite(self.picture, self.size)
             girl.center_x = SCREEN_WIDTH - 70*i
             girl.center_y = SCREEN_HEIGHT + 50
             self.model_list.append(girl)
+            self.speed[girl.center_x] = self.tempSpeed
+            self.tag[girl.center_x] = "girl"
+            
     def run(self):
         for girl in self.model_list:
-            girl.center_y -= self.speed
+            girl.center_y -= self.speed[girl.center_x]
     def draw(self):
         for girl in self.model_list:
             girl.draw()
 
-'''
-    def prototype(self): #start
-        for prototype in self.prototype_list:
-            if self.girl_frame_count % 100 == 0:
-                girl = arcade.Sprite("images/girl.png",0.7)
-                girl.center_x = prototype.center_x
-                girl.top = prototype.bottom
-                girl.change_y = -3
-                self.girl_list.append(girl)
-    def copy(self): #bonus
-        for self.prototype in self.prototype_list:
-            if self.girl_frame_count % 20 == 0:
-                girl = arcade.Sprite("images/coin.png")
-                girl.center_x = prototype.center_x
-                girl.top = prototype.bottom
-                girl.change_y = -3
-                self.girl_list.append(girl)
-    def speed(self): #random_start
-        for self.prototype in self.prototype_list:
-            if random.randrange(100) == 0:
-                girl = arcade.Sprite("images/girl.png",0.7)
-                girl.center_x = self.prototype.center_x
-                girl.angle = 0
-                girl.top = self.prototype.bottom
-                girl.change_y = -3
-                self.girl_list.append(girl)
-    def generateGirl(self):
-        for i in range(8):
-            girl = arcade.Sprite("images/girl.png", 0.5)
-            girl.center_x = SCREEN_WIDTH - 70*i
-            girl.center_y = SCREEN_HEIGHT + 50
-            self.prototype_list.append(girl)
-    def run(self, speed):
-        for self.prototype in self.prototype_list:
-            if self.girl_frame_count % 20 == 0:
-                girl = arcade.Sprite("images/coin.png")
-                girl.center_x = prototype.center_x
-                girl.top = prototype.bottom
-                girl.change_y = -3
-                self.girl_list.append(girl)
-'''
 class Knife:
     def __init__(self, width, height):
         self.grade_list = arcade.SpriteList()
@@ -115,14 +79,6 @@ class boxing(arcade.Window):
         self.sprites_list.append(self.character)
         self.character_list.append(self.character)
 
-        for i in range(8):
-            self.prototype = arcade.Sprite("images/girl.png", 0.5)
-            self.prototype.center_x = SCREEN_WIDTH - 70*i
-            self.prototype.center_y = SCREEN_HEIGHT + 50
-            self.prototype.angle = 0
-            self.sprites_list.append(self.prototype)
-            self.prototype_list.append(self.prototype)
-
         for j in range(8):
             self.fire = arcade.Sprite("images/f.png", 0.7)
             self.fire.center_x = SCREEN_WIDTH - 70*j
@@ -134,10 +90,14 @@ class boxing(arcade.Window):
         self.coin = arcade.Sprite('images/score.png',0.35)
         self.coin.set_position(430 , 670)
 
-        self.girl1 = Model_S("images/girl.png",0.7,3)
-        self.girl1.generate()
-        self.girl2 = Model_S("images/girl.png",0.7,3)
-        self.girl2.generate()
+        self.girl = []
+        self.girl.append(Model_S("images/girl.png",0.7,3))
+        self.girl[0].generate()
+        self.girl.append(Model_S("images/girl.png",0.7,3))
+        self.girl[1].generate()
+        self.check = False
+        
+
     def on_draw(self):
         arcade.start_render()
 
@@ -151,8 +111,8 @@ class boxing(arcade.Window):
             self.score_text = arcade.create_text(output, arcade.color.GOLD, 16)
         arcade.render_text(self.score_text, 450,662)
         self.coin.draw()
-        self.girl1.draw()
-        self.girl2.draw()
+        self.girl[0].draw()
+        self.girl[1].draw()
 
     def draw_game_over(self):
         output = "Score : {}".format(self.score)
@@ -180,12 +140,40 @@ class boxing(arcade.Window):
                 self.punch_list.append(punch)
                 self.sprites_list.append(punch)
 
-        #self.girl_frame_count += 1
         if self.times < 20:
-            self.girl1.run()
-            if(self.girl1.model_list[0].center_y < 20):
-                self.girl2.run()
-            
+            self.girl[0].run()
+            if(self.girl[0].model_list[0].center_y < 20):
+                self.girl[0] = Model_S("images/girl.png",0.7,3)
+                self.girl[0].generate()
+        if self.times >20 and self.times < 40:
+            self.girl[0].run()
+            if(self.girl[0].model_list[0].center_y < 200):
+                self.girl[1] = self.girl[0]
+                self.girl[0] = Model_S("images/girl.png",0.7,3)
+                self.girl[0].generate()
+                self.check = True
+            if self.check:
+                self.girl[1].run()
+
+        for i in [0,1]:
+            for punch in self.punch_list:
+                hit_list = arcade.check_for_collision_with_list(punch,self.girl[i].model_list)
+                if len(hit_list) > 0:
+                    punch.kill()
+                for girl in hit_list:
+                    girl.texture = arcade.load_texture("images/coin.png")
+                    self.girl[i].tag[girl.center_x] = "coin"
+                    self.girl[i].speed[girl.center_x] = 4
+                for character in self.character_list:
+                    keep_list = arcade.check_for_collision_with_list(character,self.girl[i].model_list)
+                    for girl in keep_list:
+                        if self.girl[i].tag[girl.center_x] == "coin":
+                            girl.kill()
+                            self.score += 1
+                        else :
+                            self.is_game_over = True
+                            break
+
         if self.times < 30:
             for self.fire in self.fire_list:
                 if random.randrange(3000) == 0:
