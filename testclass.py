@@ -56,6 +56,7 @@ class boxing(arcade.Window):
         self.score = 0
         self.score_text = None
         self.times = 0.0
+        self.state = False
 
         self.is_game_over = False
         self.punch_frame_count = 0
@@ -176,7 +177,9 @@ class boxing(arcade.Window):
                             self.score += 1
                         else :
                             self.is_game_over = True
-                            break
+                            self.state = True
+                            #break
+
         if self.times < 30:
             self.knife[0].run()
             if(self.knife[0].model_list[0].center_y < 20):
@@ -222,8 +225,14 @@ class boxing(arcade.Window):
                 game_list = arcade.check_for_collision_with_list(character,self.knife[j].model_list)
                 for knife in game_list:
                     self.is_game_over = True
-                    break
+                    self.state = True
+                    #break
 
+    def on_mouse_press(self, x, y, button, modifiers):
+        if self.state == True:
+            self.update()
+            self.state = False
+            
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
         self.character.center_y = 100

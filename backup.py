@@ -1,4 +1,4 @@
-import arcade
+import arcade.key
 import random
 
 SCREEN_WIDTH = 500
@@ -60,6 +60,7 @@ class boxing(arcade.Window):
         self.score = 0
         self.score_text = None
         self.times = 0.0
+        self.state = False
 
         self.is_game_over = False
         self.punch_frame_count = 0
@@ -92,7 +93,11 @@ class boxing(arcade.Window):
         self.girl.append(Model_S("images/girl.png",0.7,3))
         self.girl[1].generate()
         self.check = False
-        
+
+    '''    
+    def setup(self):
+        self.background = arcade.load_texture("images/background.jpg")
+    ''' 
 
     def on_draw(self):
         arcade.start_render()
@@ -125,7 +130,6 @@ class boxing(arcade.Window):
 
         self.times += delta_time
         self.punch_frame_count += 1
-
         for character in self.character_list:
             if self.punch_frame_count % 10 == 0:
                 punch = arcade.Sprite("images/punch.png",0.7)
@@ -186,8 +190,8 @@ class boxing(arcade.Window):
                             self.score += 1
                         else :
                             self.is_game_over = True
-                            break
-
+                            self.state = True
+                            #break
         if self.times < 30:
             for self.prototype in self.prototype_list:
                 if random.randrange(3000) == 0:
@@ -240,7 +244,13 @@ class boxing(arcade.Window):
             game_list = arcade.check_for_collision_with_list(knife,self.character_list)
             for knife in game_list:
                 self.is_game_over = True
-                break
+                self.state = True
+                #break
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        if self.state == True:
+            self.update()
+            self.state = False
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
