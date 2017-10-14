@@ -4,7 +4,7 @@ import random
 SCREEN_WIDTH = 500
 SCREEN_HEIGHT = 700
 
-class Model_S: #sprite and command
+class Model_S:
     def __init__(self, picture, size, speed):
         self.model_list = arcade.SpriteList()
         self.picture = picture
@@ -27,30 +27,26 @@ class Model_S: #sprite and command
     def draw(self):
         for girl in self.model_list:
             girl.draw()
-class Knife_S: #sprite and command
+class Knife_S:
     def __init__(self, picture, size, speed):
         self.model_list = arcade.SpriteList()
         self.picture = picture
         self.speed = {}
-        self.tag = {}
         self.size = size
         self.tempSpeed = speed
     def generate(self):
-        for i in range(8):
-            girl = arcade.Sprite(self.picture, self.size)
-            girl.center_x = SCREEN_WIDTH - 70*i
-            girl.center_y = SCREEN_HEIGHT + 50
-            self.model_list.append(girl)
-            self.speed[girl.center_x] = self.tempSpeed
-            self.tag[girl.center_x] = "girl"
-            
+        prototype = arcade.Sprite(self.picture, self.size)
+        prototype.center_x = random.randrange(500)
+        prototype.center_y = SCREEN_HEIGHT + 60
+        prototype.angle = 180 
+        self.model_list.append(prototype)
+        self.speed[prototype.center_x] = self.tempSpeed            
     def run(self):
-        for girl in self.model_list:
-            girl.center_y -= self.speed[girl.center_x]
+        for prototype in self.model_list:
+            prototype.center_y -= self.speed[prototype.center_x]
     def draw(self):
-        for girl in self.model_list:
-            girl.draw()
-
+        for prototype in self.model_list:
+            prototype.draw()
 
 class boxing(arcade.Window):
     def __init__(self, width, height):
@@ -63,25 +59,14 @@ class boxing(arcade.Window):
 
         self.is_game_over = False
         self.punch_frame_count = 0
-        self.girl_frame_count = 0
 
         self.sprites_list = arcade.SpriteList()
         self.character_list = arcade.SpriteList()
         self.punch_list = arcade.SpriteList()
-        self.knife_list = arcade.SpriteList()
-        self.prototype_list = arcade.SpriteList()
 
         self.character = arcade.Sprite("images/boy.png")
         self.sprites_list.append(self.character)
         self.character_list.append(self.character)
-
-        for j in range(8):
-            self.prototype = arcade.Sprite("images/knife.png", 0.7)
-            self.prototype.center_x = SCREEN_WIDTH - 70*j
-            self.prototype.center_y = SCREEN_HEIGHT + 60
-            self.prototype.angle = 0
-            self.sprites_list.append(self.prototype)
-            self.prototype_list.append(self.prototype)
 
         self.coin = arcade.Sprite('images/score.png',0.35)
         self.coin.set_position(430 , 670)
@@ -92,7 +77,11 @@ class boxing(arcade.Window):
         self.girl.append(Model_S("images/girl.png",0.7,3))
         self.girl[1].generate()
         self.check = False
-        
+        self.knife = []
+        self.knife.append(Knife_S("images/knife.png",0.8,9))
+        self.knife[0].generate()
+        self.knife.append(Knife_S("images/knife.png",0.8,9))
+        self.knife[1].generate()
 
     def on_draw(self):
         arcade.start_render()
@@ -109,6 +98,8 @@ class boxing(arcade.Window):
         self.coin.draw()
         self.girl[0].draw()
         self.girl[1].draw()
+        self.knife[0].draw()
+        self.knife[1].draw()
 
     def draw_game_over(self):
         output = "Score : {}".format(self.score)
@@ -130,7 +121,6 @@ class boxing(arcade.Window):
             if self.punch_frame_count % 10 == 0:
                 punch = arcade.Sprite("images/punch.png",0.7)
                 punch.center_x = self.character.center_x
-                punch.angle = 0
                 punch.top = self.character.top
                 punch.change_y = 5
                 self.punch_list.append(punch)
@@ -187,47 +177,38 @@ class boxing(arcade.Window):
                         else :
                             self.is_game_over = True
                             break
-
         if self.times < 30:
-            for self.prototype in self.prototype_list:
-                if random.randrange(3000) == 0:
-                    knife = arcade.Sprite("images/knife.png",0.8)
-                    knife.center_x = self.prototype.center_x
-                    knife.angle = 180
-                    knife.top = self.prototype.bottom
-                    knife.change_y = -9
-                    self.knife_list.append(knife)
-                    self.sprites_list.append(knife)
-        if self.times > 30 and self.times < 45:
-            for self.prototype in self.prototype_list:
-                if random.randrange(1000) == 0:
-                    knife = arcade.Sprite("images/knife.png",0.8)
-                    knife.center_x = self.prototype.center_x
-                    knife.angle = 180
-                    knife.top = self.prototype.bottom
-                    knife.change_y = -9
-                    self.knife_list.append(knife)
-                    self.sprites_list.append(knife)
-        if self.times > 45 and self.times < 48:
-            for self.prototype in self.prototype_list:
-                if random.randrange(200) == 0:
-                    knife = arcade.Sprite("images/knife.png",0.8)
-                    knife.center_x = self.prototype.center_x
-                    knife.angle = 180
-                    knife.top = self.prototype.bottom
-                    knife.change_y = -10
-                    self.knife_list.append(knife)
-                    self.sprites_list.append(knife)
-        if self.times > 48:
-            for self.prototype in self.prototype_list:
-                if random.randrange(500) == 0:
-                    knife = arcade.Sprite("images/knife.png",0.8)
-                    knife.center_x = self.prototype.center_x
-                    knife.angle = 180
-                    knife.top = self.prototype.bottom
-                    knife.change_y = -9
-                    self.knife_list.append(knife)
-                    self.sprites_list.append(knife)
+            self.knife[0].run()
+            if(self.knife[0].model_list[0].center_y < 20):
+                self.knife[0] = Knife_S("images/knife.png",0.8,9)
+                self.knife[0].generate()
+        if self.times >20 and self.times < 40:
+            self.knife[0].run()
+            if(self.knife[0].model_list[0].center_y < 100):
+                self.knife[1] = self.knife[0]
+                self.knife[0] = Knife_S("images/knife.png",0.8,9)
+                self.knife[0].generate()
+                self.check = True
+            if self.check:
+                self.knife[1].run()
+        if self.times >40 and self.times < 60:
+            self.knife[0].run()
+            if(self.knife[0].model_list[0].center_y < 200):
+                self.knife[1] = self.knife[0]
+                self.knife[0] = Knife_S("images/knife.png",0.8,9)
+                self.knife[0].generate()
+                self.check = True
+            if self.check:
+                self.knife[1].run()
+        if self.times >60:
+            self.knife[0].run()
+            if(self.knife[0].model_list[0].center_y < 100):
+                self.knife[1] = self.knife[0]
+                self.knife[0] = Knife_S("images/knife.png",0.8,9)
+                self.knife[0].generate()
+                self.check = True
+            if self.check:
+                self.knife[1].run()
 
         for punch in self.punch_list:
             if punch.top < 0:
@@ -236,11 +217,12 @@ class boxing(arcade.Window):
         self.punch_list.update()
         self.sprites_list.update()
 
-        for knife in self.knife_list:
-            game_list = arcade.check_for_collision_with_list(knife,self.character_list)
-            for knife in game_list:
-                self.is_game_over = True
-                break
+        for j in [0,1]:
+            for character in self.character_list:
+                game_list = arcade.check_for_collision_with_list(character,self.knife[j].model_list)
+                for knife in game_list:
+                    self.is_game_over = True
+                    break
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
