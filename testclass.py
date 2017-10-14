@@ -48,6 +48,26 @@ class Knife_S:
         for prototype in self.model_list:
             prototype.draw()
 
+class Basket_S:
+    def __init__(self, picture, size, speed):
+        self.model_list = arcade.SpriteList()
+        self.picture = picture
+        self.speed = {}
+        self.size = size
+        self.tempSpeed = speed
+    def generate(self):
+        basket = arcade.Sprite(self.picture, self.size)
+        basket.center_x = random.randrange(2000)
+        basket.center_y = SCREEN_HEIGHT + 70
+        self.model_list.append(basket)
+        self.speed[basket.center_x] = self.tempSpeed            
+    def run(self):
+        for basket in self.model_list:
+            basket.center_y -= self.speed[basket.center_x]
+    def draw(self):
+        for basket in self.model_list:
+            basket.draw()
+
 class boxing(arcade.Window):
     def __init__(self, width, height):
         super().__init__(width, height)
@@ -83,6 +103,11 @@ class boxing(arcade.Window):
         self.knife[0].generate()
         self.knife.append(Knife_S("images/knife.png",0.8,9))
         self.knife[1].generate()
+        self.basket = []
+        self.basket.append(Basket_S("images/basket.png",0.8,6))
+        self.basket[0].generate()
+        self.basket.append(Basket_S("images/basket.png",0.8,6))
+        self.basket[1].generate()
 
     def on_draw(self):
         arcade.start_render()
@@ -101,6 +126,8 @@ class boxing(arcade.Window):
         self.girl[1].draw()
         self.knife[0].draw()
         self.knife[1].draw()
+        self.basket[0].draw()
+        self.basket[0].draw()
 
     def draw_game_over(self):
         output = "Score : {}".format(self.score)
@@ -134,7 +161,7 @@ class boxing(arcade.Window):
                 self.girl[0].generate()
         if self.times >20 and self.times < 40:
             self.girl[0].run()
-            if(self.girl[0].model_list[0].center_y < 200):
+            if(self.girl[0].model_list[0].center_y < 100):
                 self.girl[1] = self.girl[0]
                 self.girl[0] = Model_S("images/girl.png",0.7,3)
                 self.girl[0].generate()
@@ -143,7 +170,7 @@ class boxing(arcade.Window):
                 self.girl[1].run()
         if self.times >40 and self.times < 60:
             self.girl[0].run()
-            if(self.girl[0].model_list[0].center_y < 400):
+            if(self.girl[0].model_list[0].center_y < 200):
                 self.girl[1] = self.girl[0]
                 self.girl[0] = Model_S("images/girl.png",0.7,3)
                 self.girl[0].generate()
@@ -152,7 +179,7 @@ class boxing(arcade.Window):
                 self.girl[1].run()
         if self.times >60:
             self.girl[0].run()
-            if(self.girl[0].model_list[0].center_y < 600):
+            if(self.girl[0].model_list[0].center_y < 300):
                 self.girl[1] = self.girl[0]
                 self.girl[0] = Model_S("images/girl.png",0.7,4)
                 self.girl[0].generate()
@@ -185,7 +212,7 @@ class boxing(arcade.Window):
             if(self.knife[0].model_list[0].center_y < 20):
                 self.knife[0] = Knife_S("images/knife.png",0.8,9)
                 self.knife[0].generate()
-        if self.times >20 and self.times < 40:
+        if self.times > 30 and self.times < 50:
             self.knife[0].run()
             if(self.knife[0].model_list[0].center_y < 100):
                 self.knife[1] = self.knife[0]
@@ -194,7 +221,7 @@ class boxing(arcade.Window):
                 self.check = True
             if self.check:
                 self.knife[1].run()
-        if self.times >40 and self.times < 60:
+        if self.times >50 and self.times < 70:
             self.knife[0].run()
             if(self.knife[0].model_list[0].center_y < 200):
                 self.knife[1] = self.knife[0]
@@ -203,7 +230,7 @@ class boxing(arcade.Window):
                 self.check = True
             if self.check:
                 self.knife[1].run()
-        if self.times >60:
+        if self.times >70:
             self.knife[0].run()
             if(self.knife[0].model_list[0].center_y < 100):
                 self.knife[1] = self.knife[0]
@@ -228,11 +255,26 @@ class boxing(arcade.Window):
                     self.state = True
                     #break
 
+        if self.times > 60 and self.times < 65:
+            self.basket[0].run()
+            if(self.basket[0].model_list[0].center_y < 10):
+                self.basket[0] = Basket_S("images/basket.png",0.8,6)
+                self.basket[0].generate()
+        if self.times > 100 and self.times < 105:
+            self.basket[0].run()
+            if(self.basket[0].model_list[0].center_y < 10):
+                self.basket[1] = self.basket[0]
+                self.basket[0] = Basket_S("images/basket.png",0.8,6)
+                self.basket[0].generate()
+                self.check = True
+            if self.check:
+                self.basket[1].run()
+
     def on_mouse_press(self, x, y, button, modifiers):
         if self.state == True:
             self.update()
             self.state = False
-            
+
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         self.character.center_x = x
         self.character.center_y = 100
