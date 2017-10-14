@@ -255,12 +255,12 @@ class boxing(arcade.Window):
                     self.state = True
                     #break
 
-        if self.times > 50 and self.times < 55:
+        if self.times > 50 and self.times < 70:
             self.basket[0].run()
             if(self.basket[0].model_list[0].center_y < 10):
                 self.basket[0] = Basket_S("images/basket.png",0.8,6)
                 self.basket[0].generate()
-        if self.times > 100 and self.times < 105:
+        if self.times > 100 and self.times < 120:
             self.basket[0].run()
             if(self.basket[0].model_list[0].center_y < 10):
                 self.basket[1] = self.basket[0]
@@ -269,7 +269,7 @@ class boxing(arcade.Window):
                 self.check = True
             if self.check:
                 self.basket[1].run()
-        if self.times > 200 and self.times < 205:
+        if self.times > 200 and self.times < 220:
             self.basket[0].run()
             if(self.basket[0].model_list[0].center_y < 10):
                 self.basket[1] = self.basket[0]
