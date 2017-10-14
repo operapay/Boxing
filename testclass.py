@@ -255,7 +255,7 @@ class boxing(arcade.Window):
                     self.state = True
                     #break
 
-        if self.times > 60 and self.times < 65:
+        if self.times > 50 and self.times < 55:
             self.basket[0].run()
             if(self.basket[0].model_list[0].center_y < 10):
                 self.basket[0] = Basket_S("images/basket.png",0.8,6)
@@ -269,6 +269,30 @@ class boxing(arcade.Window):
                 self.check = True
             if self.check:
                 self.basket[1].run()
+        if self.times > 200 and self.times < 205:
+            self.basket[0].run()
+            if(self.basket[0].model_list[0].center_y < 10):
+                self.basket[1] = self.basket[0]
+                self.basket[0] = Basket_S("images/basket.png",0.8,6)
+                self.basket[0].generate()
+                self.check = True
+            if self.check:
+                self.basket[1].run()
+
+        for i in [0,1]:
+            for punch in self.punch_list:
+                hit_list = arcade.check_for_collision_with_list(punch,self.basket[i].model_list)
+                if len(hit_list) > 0:
+                    punch.kill()
+                for basket in hit_list:
+                    basket.texture = arcade.load_texture("images/money.png")
+                    self.basket[i].speed[basket.center_x] = 7
+                for character in self.character_list:
+                    keep_list = arcade.check_for_collision_with_list(character,self.basket[i].model_list)
+                    for basket in keep_list:
+                            basket.kill()
+                            self.score += 10
+
 
     def on_mouse_press(self, x, y, button, modifiers):
         if self.state == True:
