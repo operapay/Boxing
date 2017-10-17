@@ -57,7 +57,8 @@ class Basket_S:
         self.tempSpeed = speed
     def generate(self):
         basket = arcade.Sprite(self.picture, self.size)
-        basket.center_x = random.randrange(2000)
+        basket_half_width = basket.width // 2
+        basket.center_x = random.randint(basket_half_width, SCREEN_WIDTH - basket_half_width)
         basket.center_y = SCREEN_HEIGHT + 70
         self.model_list.append(basket)
         self.speed[basket.center_x] = self.tempSpeed            
@@ -72,7 +73,8 @@ class boxing(arcade.Window):
     def __init__(self, width, height):
         super().__init__(width, height)
 
-        arcade.set_background_color(arcade.color.BLACK)
+        #arcade.set_background_color(arcade.color.BLACK
+        self.background = arcade.load_texture("images/bgnew.jpg")
         self.score = 0
         self.score_text = None
         self.times = 0.0
@@ -86,6 +88,7 @@ class boxing(arcade.Window):
         self.punch_list = arcade.SpriteList()
 
         self.character = arcade.Sprite("images/boy.png")
+        self.character_half_width = self.character.width // 2
         self.sprites_list.append(self.character)
         self.character_list.append(self.character)
 
@@ -106,11 +109,10 @@ class boxing(arcade.Window):
         self.basket = []
         self.basket.append(Basket_S("images/basket.png",0.8,6))
         self.basket[0].generate()
-        self.basket.append(Basket_S("images/basket.png",0.8,6))
-        self.basket[1].generate()
 
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_texture_rectangle(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
 
         if self.is_game_over:
             self.draw_game_over()
@@ -127,7 +129,7 @@ class boxing(arcade.Window):
         self.knife[0].draw()
         self.knife[1].draw()
         self.basket[0].draw()
-        self.basket[0].draw()
+        #self.basket[1].draw()
 
     def draw_game_over(self):
         output = "Score : {}".format(self.score)
@@ -205,7 +207,6 @@ class boxing(arcade.Window):
                         else :
                             self.is_game_over = True
                             self.state = True
-                            #break
 
         if self.times < 30:
             self.knife[0].run()
@@ -254,41 +255,37 @@ class boxing(arcade.Window):
                     self.is_game_over = True
                     self.state = True
                     #break
+        if self.times > 0 and self.times < 10: # 50, 70
+            self.basket[0].run()
+            self.init_second_basket = True
+            #if(self.basket[0].model_list[0].center_y < 30):
+                #self.basket[0] = Basket_S("images/basket.png",0.8,6)
+                #self.basket[0].generate()
+        if self.times > 10 and self.times < 20: # 100 120
+            if self.init_second_basket:
+                self.basket[0] = Basket_S("images/basket.png",0.8,6)
+                self.basket[0].generate()
+                self.init_second_basket = False
+                self.init_third_basket = True
+            self.basket[0].run()
 
-        if self.times > 50 and self.times < 70:
-            self.basket[0].run()
-            if(self.basket[0].model_list[0].center_y < 10):
+        if self.times > 20 and self.times < 30: # 200 220
+            if self.init_third_basket:
                 self.basket[0] = Basket_S("images/basket.png",0.8,6)
                 self.basket[0].generate()
-        if self.times > 100 and self.times < 120:
+                self.init_third_basket = False
             self.basket[0].run()
-            if(self.basket[0].model_list[0].center_y < 10):
-                self.basket[1] = self.basket[0]
-                self.basket[0] = Basket_S("images/basket.png",0.8,6)
-                self.basket[0].generate()
-                self.check = True
-            if self.check:
-                self.basket[1].run()
-        if self.times > 200 and self.times < 220:
-            self.basket[0].run()
-            if(self.basket[0].model_list[0].center_y < 10):
-                self.basket[1] = self.basket[0]
-                self.basket[0] = Basket_S("images/basket.png",0.8,6)
-                self.basket[0].generate()
-                self.check = True
-            if self.check:
-                self.basket[1].run()
 
-        for i in [0,1]:
+        for k in [0]:
             for punch in self.punch_list:
-                hit_list = arcade.check_for_collision_with_list(punch,self.basket[i].model_list)
+                hit_list = arcade.check_for_collision_with_list(punch,self.basket[k].model_list)
                 if len(hit_list) > 0:
                     punch.kill()
                 for basket in hit_list:
                     basket.texture = arcade.load_texture("images/money.png")
-                    self.basket[i].speed[basket.center_x] = 7
+                    self.basket[k].speed[basket.center_x] = 7
                 for character in self.character_list:
-                    keep_list = arcade.check_for_collision_with_list(character,self.basket[i].model_list)
+                    keep_list = arcade.check_for_collision_with_list(character,self.basket[k].model_list)
                     for basket in keep_list:
                             basket.kill()
                             self.score += 10
@@ -300,7 +297,12 @@ class boxing(arcade.Window):
             self.state = False
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
-        self.character.center_x = x
+        if x < self.character_half_width:
+            self.character.center_x = character_half_width
+        elif x > SCREEN_WIDTH - self.character_half_width:
+            self.character.center_x = SCREEN_WIDTH - self.character_half_width
+        else:
+            self.character.center_x = x
         self.character.center_y = 100
 
 def main():
