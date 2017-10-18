@@ -83,6 +83,9 @@ class boxing(arcade.Window):
 
         #arcade.set_background_color(arcade.color.BLACK
         self.background = arcade.load_texture("images/bgnew.jpg")
+        self.init_component()
+
+    def init_component(self):
         self.score = 0
         self.score_text = None
         self.times = 0.0
@@ -145,13 +148,13 @@ class boxing(arcade.Window):
         arcade.draw_text(output, 155, 440, arcade.color.WHITE, 40)
         output1 = "Game Over"
         arcade.draw_text(output1, 150, 370, arcade.color.WHITE, 35)
-        output2 = "Enter Play Again"
+        output2 = "Click To Play Again"
         arcade.draw_text(output2, 150, 290, arcade.color.WHITE, 24)
 
     def update(self, delta_time):
         if self.is_game_over:
             self.draw_game_over()
-            return None
+            return
 
         self.times += delta_time
         self.punch_frame_count += 1
@@ -261,9 +264,7 @@ class boxing(arcade.Window):
             for character in self.character_list:
                 game_list = arcade.check_for_collision_with_list(character,self.knife[j].model_list)
                 for knife in game_list:
-                    self.is_game_over = True
-                    self.state = True
-                    
+                    self.is_game_over = True                   
 
         if self.times > 40 and self.times < 60: 
             self.basket[0].run()
@@ -298,9 +299,8 @@ class boxing(arcade.Window):
 
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if self.state == True:
-            self.update()
-            self.state = False
+        if self.is_game_over and button == 1: # 1 for LEFT Click
+            self.init_component()
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         if x < self.character_half_width:
